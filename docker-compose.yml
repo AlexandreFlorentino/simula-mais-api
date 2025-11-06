@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  # Banco de Dados PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: simula_mais_db
+    environment:
+      POSTGRES_DB: simula_mais
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # REMOVIDO: init-db.sql - agora usamos seed via Node.js
+    networks:
+      - simula-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Aplicação Backend
+  backend:
+    build: .
+    container_name: simula_mais_backend
+    environment:
+      NODE_ENV: development
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_NAME: simula_mais
+      DB_USER: postgres
+      DB_PASS: postgres123
+      JWT_SECRET: seu_jwt_super_seguro_aqui_mude_em_producao
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - simula-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.js"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    # Comando para iniciar automaticamente o seed e depois o servidor
+    command: >
+      sh -c "
+        echo '🔄 Aguardando banco de dados...' &&
+        sleep 10 &&
+        echo '🌱 Executando seed do banco...' &&
+        npm run db:seed &&
+        echo '🚀 Iniciando servidor...' &&
+        npm run dev
+      "
+
+  # PGAdmin (Opcional - para gerenciar o banco)
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: simula_mais_pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@simulamais.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+    ports:
+      - "8080:80"
+    networks:
+      - simula-network
+    depends_on:
+      - postgres
+
+volumes:
+  postgres_data:
+
+networks:
+  simula-network:
+    driver: bridge
