@@ -1,6 +1,7 @@
 {
   "name": "simula-mais-api",
   "version": "1.0.0",
+  "description": "Backend para plataforma de simulados ENEM/Concursos",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
