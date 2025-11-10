@@ -1,15 +1,14 @@
 const express = require('express');
-const cors = require('cors'); // ← INSTALAR: npm install cors
+const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ⭐⭐⭐ MIDDLEWARES CRÍTICOS ⭐⭐⭐
 app.use(cors());
 app.use(express.json());
 
-// ⭐⭐⭐ ISSO ESTÁ FALTANDO ⭐⭐⭐
-const routes = require('./routes');
-app.use('/api', routes); // ← CONECTA TODAS AS ROTAS!
+const routes = require('./src/routes');  
+
+app.use('/api', routes);
 
 app.get('/', (req, res) => {
   res.json({ 
