@@ -1,15 +1,16 @@
 const express = require('express');
-const cors = require('cors'); // ← IMPORTANTE para frontend conversar
+const cors = require('cors'); // ← INSTALAR: npm install cors
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(cors()); // Permite frontend acessar backend
-app.use(express.json()); // Permite receber JSON
+// ⭐⭐⭐ MIDDLEWARES CRÍTICOS ⭐⭐⭐
+app.use(cors());
+app.use(express.json());
 
+// ⭐⭐⭐ ISSO ESTÁ FALTANDO ⭐⭐⭐
 const routes = require('./routes');
-app.use('/api', routes); // ← ISSO ESTÁ FALTANDO!
+app.use('/api', routes); // ← CONECTA TODAS AS ROTAS!
 
-// Rota raiz (opcional)
 app.get('/', (req, res) => {
   res.json({ 
     message: '🚀 Simula+ API funcionando!',
