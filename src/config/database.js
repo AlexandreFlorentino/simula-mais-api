@@ -1,7 +1,7 @@
 module.exports = {
   development: {
     dialect: 'sqlite',
-    storage: './database.sqlite',
+    storage: 'database.sqlite',
     logging: console.log
   },
   production: {
@@ -9,4 +9,5 @@ module.exports = {
     storage: './database.sqlite',
     logging: false
   }
+
 };
