@@ -1,7 +1,10 @@
 const { Sequelize } = require('sequelize');
 const config = require('../config/database');
 
-const sequelize = new Sequelize(config);
+const sequelize = new Sequelize({
+  dialect: 'sqlite',
+  storage: 'database.sqlite'
+});
 
 // Importar modelos
 const User = require('./User')(sequelize, Sequelize);
